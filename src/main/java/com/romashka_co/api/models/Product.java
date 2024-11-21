@@ -22,7 +22,7 @@ public class Product {
     @Size(max = 4096)
     private String description;
 
-    @Min(0)
+    @Min(value = 0)
     private double price = 0;
 
     private boolean availability = false;

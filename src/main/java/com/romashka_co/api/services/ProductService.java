@@ -1,5 +1,7 @@
 package com.romashka_co.api.services;
 
+import com.romashka_co.api.exceptions.ProductCreationException;
+import com.romashka_co.api.exceptions.ProductNotFoundException;
 import com.romashka_co.api.models.Product;
 import com.romashka_co.api.repos.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,7 +23,7 @@ public class ProductService {
 
     // Получение товара по id
     public Product getProductById(Long id) {
-        return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Товар не найден :("));
+        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Товар не найден"));
     }
 
     // Добавление нового товара
@@ -31,7 +33,7 @@ public class ProductService {
 
     // Обновление данных о товаре
     public Product updateProduct(Long id, Product productInfo) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Товар не найден :("));
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Товар не найден"));
 
         product.setName(productInfo.getName());
         product.setDescription(productInfo.getDescription());
@@ -43,7 +45,7 @@ public class ProductService {
 
     // Удаление товара
     public void deleteProduct(Long id) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Товар не найден :("));
+        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Товар не найден"));
         productRepository.delete(product);
     }
 }

@@ -17,7 +17,6 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        System.out.println("Все товары успешно получены :)\n");
         List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products); // Возвращение статуса 200 Ok
     }
@@ -25,28 +24,24 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         Product product = productService.getProductById(id);
-        System.out.printf("Товар №%d был успешно получен :)\n", id);
         return ResponseEntity.ok(product);  // Возвращение статуса 200 Ok
     }
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
-        System.out.println("Товар был успешно добавлен :)\n");
         Product createdProduct = productService.createProduct(product);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);  // Возвращение статуса 201 Created
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product productInfo) {
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @Valid @RequestBody Product productInfo) {
         Product updatedProduct = productService.updateProduct(id, productInfo);
-        System.out.printf("Информация о товаре №%d была успешно обновлена :)\n", id);
         return ResponseEntity.ok(updatedProduct);   // Возвращение статуса 200 Ok
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Product> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
-        System.out.printf("Товар №%d был успешно удалён :)\n", id);
         return ResponseEntity.noContent().build();  // Возвращение статуса 204 No Content
     }
 }
