@@ -1,15 +1,13 @@
 package com.romashka_co.api.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 // Класс-модель с описанием структуры товара
 @Entity
+@Table(name = "products")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,14 +15,18 @@ public class Product {
 
     @NotBlank(message = "Название товара не может быть пустым")
     @Size(max = 255, message = "Название товара не может содержать более 255 символов")
+    @Column(name = "name", length = 255)
     private String name;
 
     @Size(max = 4096, message = "Описание товара не может содержать более 4096 символов")
+    @Column(name = "description", length = 4096)
     private String description;
 
     @Min(value = 0, message = "Цена товара не может быть отрицательной")
+    @Column(name = "price", nullable = false, columnDefinition = "DOUBLE PRECISION DEFAULT 0")
     private double price = 0;
 
+    @Column(name = "availability", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean availability = false;
 
     public Long getId() {
