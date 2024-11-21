@@ -28,19 +28,32 @@ public class ProductService {
 
     // Добавление нового товара
     public Product createProduct(Product product) {
-        return productRepository.save(product);
+        try {
+            return productRepository.save(product);
+        }
+        catch (Exception ex) {
+            throw new ProductCreationException(ex.getMessage());
+        }
     }
 
     // Обновление данных о товаре
     public Product updateProduct(Long id, Product productInfo) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Товар не найден"));
+        try {
+            Product product = productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Товар не найден"));
 
-        product.setName(productInfo.getName());
-        product.setDescription(productInfo.getDescription());
-        product.setPrice(productInfo.getPrice());
-        product.setAvailability(productInfo.getAvailability());
+            product.setName(productInfo.getName());
+            product.setDescription(productInfo.getDescription());
+            product.setPrice(productInfo.getPrice());
+            product.setAvailability(productInfo.getAvailability());
 
-        return productRepository.save(product);
+            return productRepository.save(product);
+        }
+        catch (ProductNotFoundException ex) {
+            throw new ProductNotFoundException("Товар не найден");
+        }
+        catch (Exception ex) {
+            throw new ProductCreationException(ex.getMessage());
+        }
     }
 
     // Удаление товара

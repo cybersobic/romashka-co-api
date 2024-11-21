@@ -15,14 +15,14 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Size(max = 255)
+    @NotBlank(message = "Название товара не может быть пустым")
+    @Size(max = 255, message = "Название товара не может содержать более 255 символов")
     private String name;
 
-    @Size(max = 4096)
+    @Size(max = 4096, message = "Описание товара не может содержать более 4096 символов")
     private String description;
 
-    @Min(value = 0)
+    @Min(value = 0, message = "Цена товара не может быть отрицательной")
     private double price = 0;
 
     private boolean availability = false;
