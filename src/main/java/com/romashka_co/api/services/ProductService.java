@@ -4,7 +4,6 @@ import com.romashka_co.api.exceptions.ProductCreationException;
 import com.romashka_co.api.exceptions.ProductNotFoundException;
 import com.romashka_co.api.models.Product;
 import com.romashka_co.api.repos.ProductRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
