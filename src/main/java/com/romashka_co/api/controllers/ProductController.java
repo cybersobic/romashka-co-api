@@ -16,8 +16,9 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
+    public ResponseEntity<List<Product>> getAllProducts(
+            @RequestParam(required = false) Integer limit) {
+        List<Product> products = productService.getAllProducts(limit);
         return ResponseEntity.ok(products); // Возвращение статуса 200 Ok
     }
 

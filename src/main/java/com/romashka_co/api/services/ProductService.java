@@ -5,6 +5,8 @@ import com.romashka_co.api.exceptions.ProductNotFoundException;
 import com.romashka_co.api.models.Product;
 import com.romashka_co.api.repos.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -16,8 +18,17 @@ public class ProductService {
     private ProductRepository productRepository;
 
     // Получение списка всех товаров
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<Product> getAllProducts(Integer limit) {
+        if(limit == null || limit <= 0) {
+            limit = getAllProductsCount();
+        }
+        Pageable pageable = PageRequest.of(0, limit);
+        return productRepository.findAll(pageable).getContent();
+    }
+
+    // Получение количества всех товаров
+    public int getAllProductsCount() {
+        return (int) productRepository.count();
     }
 
     // Получение товара по id
