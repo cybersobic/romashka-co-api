@@ -8,6 +8,7 @@ import com.romashka_co.api.repos.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -21,12 +22,10 @@ public class ProductService {
 
     // Получение списка всех товаров
     public List<Product> getAllProducts(Integer limit, String name, Double smallerThanPrice, Double greaterThanPrice, Boolean availability, String sortBy) {
+        // Если ограничения нет, то оно равно количеству товаров
         if(limit == null) {
             limit = getAllProductsCount();
         }
-
-        // Создание ограничения по количеству выведенных товаров
-        Pageable pageable = PageRequest.of(0, limit);
 
         // Создание пустой спецификации
         Specification<Product> specification = Specification.where(null);
@@ -50,6 +49,23 @@ public class ProductService {
         if(availability != null) {
             specification = specification.and(ProductSpecification.isAvailableFilter(availability));
         }
+
+        // Создание пустого объекта сортировки
+        Sort sort = Sort.unsorted();
+
+        // Сортировка товаров
+        if(sortBy != null && !sortBy.isEmpty()) {
+            sort = switch (sortBy) {
+                case "name" -> Sort.by(Sort.Direction.ASC, "name");
+                case "-name" -> Sort.by(Sort.Direction.DESC, "name");
+                case "price" -> Sort.by(Sort.Direction.ASC, "price");
+                case "-price" -> Sort.by(Sort.Direction.DESC, "price");
+                default -> throw new IllegalArgumentException("Некорректное значение sortBy:" + sortBy);
+            };
+        }
+
+        // Создание ограничителя выведенных товаров
+        Pageable pageable = PageRequest.of(0, limit, sort);
 
         return productRepository.findAll(specification, pageable).getContent();
     }
