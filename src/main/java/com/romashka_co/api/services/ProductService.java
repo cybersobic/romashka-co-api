@@ -21,12 +21,7 @@ public class ProductService {
     private ProductRepository productRepository;
 
     // Получение списка всех товаров
-    public List<Product> getAllProducts(Integer limit, String name, Double smallerThanPrice, Double greaterThanPrice, Boolean availability, String sortBy) {
-        // Если ограничения нет, то оно равно количеству товаров
-        if(limit == null) {
-            limit = getAllProductsCount();
-        }
-
+    public List<Product> getAllProducts(Integer page, Integer size, String name, Double smallerThanPrice, Double greaterThanPrice, Boolean availability, String sortBy) {
         // Создание пустой спецификации
         Specification<Product> specification = Specification.where(null);
 
@@ -50,10 +45,8 @@ public class ProductService {
             specification = specification.and(ProductSpecification.isAvailableFilter(availability));
         }
 
-        // Создание пустого объекта сортировки
-        Sort sort = Sort.unsorted();
-
         // Сортировка товаров
+        Sort sort = Sort.unsorted();
         if(sortBy != null && !sortBy.isEmpty()) {
             sort = switch (sortBy) {
                 case "name" -> Sort.by(Sort.Direction.ASC, "name");
@@ -64,8 +57,18 @@ public class ProductService {
             };
         }
 
-        // Создание ограничителя выведенных товаров
-        Pageable pageable = PageRequest.of(0, limit, sort);
+        // Значение номера страницы по умолчанию
+        int defaultPage = 0;
+
+        // Значение количества товаров на странице по умолчанию
+        int defaultSize = getAllProductsCount();
+
+        // Проверка значений page и size
+        int pageIndex = (page != null && page >= 0) ? page : defaultPage;
+        int pageSize = (size != null && size > 0) ? size : defaultSize;
+
+        // Создание пагинации товаров
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, sort);
 
         return productRepository.findAll(specification, pageable).getContent();
     }
