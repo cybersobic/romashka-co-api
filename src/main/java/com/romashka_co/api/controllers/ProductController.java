@@ -17,8 +17,13 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts(
-            @RequestParam(required = false) Integer limit) {
-        List<Product> products = productService.getAllProducts(limit);
+            @RequestParam(required = false) Integer limit,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Double smallerThanPrice,
+            @RequestParam(required = false) Double greaterThanPrice,
+            @RequestParam(required = false) Boolean availability,
+            @RequestParam(required = false) String sortBy) {
+        List<Product> products = productService.getAllProducts(limit, name, smallerThanPrice, greaterThanPrice, availability, sortBy);
         return ResponseEntity.ok(products); // Возвращение статуса 200 Ok
     }
 

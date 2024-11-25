@@ -2,11 +2,13 @@ package com.romashka_co.api.services;
 
 import com.romashka_co.api.exceptions.ProductCreationException;
 import com.romashka_co.api.exceptions.ProductNotFoundException;
+import com.romashka_co.api.lib.ProductSpecification;
 import com.romashka_co.api.models.Product;
 import com.romashka_co.api.repos.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -18,12 +20,38 @@ public class ProductService {
     private ProductRepository productRepository;
 
     // Получение списка всех товаров
-    public List<Product> getAllProducts(Integer limit) {
-        if(limit == null || limit <= 0) {
+    public List<Product> getAllProducts(Integer limit, String name, Double smallerThanPrice, Double greaterThanPrice, Boolean availability, String sortBy) {
+        if(limit == null) {
             limit = getAllProductsCount();
         }
+
+        // Создание ограничения по количеству выведенных товаров
         Pageable pageable = PageRequest.of(0, limit);
-        return productRepository.findAll(pageable).getContent();
+
+        // Создание пустой спецификации
+        Specification<Product> specification = Specification.where(null);
+
+        // Проверка фильтра имени
+        if(name != null && !name.isEmpty()) {
+            specification = specification.and(ProductSpecification.nameFilter(name));
+        }
+
+        // Проверка фильтра меньше чем цена
+        if(smallerThanPrice != null && smallerThanPrice > 0) {
+            specification = specification.and(ProductSpecification.priceSmallerThanFilter(smallerThanPrice));
+        }
+
+        // Проверка фильтра больше чем цена
+        if(greaterThanPrice != null && greaterThanPrice > 0) {
+            specification = specification.and(ProductSpecification.priceGreaterThanFilter(greaterThanPrice));
+        }
+
+        // Проверка фильтра доступности товара
+        if(availability != null) {
+            specification = specification.and(ProductSpecification.isAvailableFilter(availability));
+        }
+
+        return productRepository.findAll(specification, pageable).getContent();
     }
 
     // Получение количества всех товаров
